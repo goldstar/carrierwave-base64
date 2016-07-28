@@ -15,9 +15,9 @@ RSpec.describe Carrierwave::Base64::Adapter do
       before(:each) do
         sham_rack_app = ShamRack.at('www.example.com').stub
         sham_rack_app.register_resource(
-          '/test.jpg', file_path('fixtures', 'test.jpg'), 'images/jpg'
+          '/test.jpeg', file_path('fixtures', 'test.jpeg'), 'images/jpeg'
         )
-        subject[:image] = 'test.jpg'
+        subject[:image] = 'test.jpeg'
       end
 
       it 'sets will_change for the attribute' do
@@ -30,7 +30,7 @@ RSpec.describe Carrierwave::Base64::Adapter do
 
         expect(
           subject.image.current_path
-        ).to eq file_path('../uploads', 'test.jpg')
+        ).to eq file_path('../uploads', 'test.jpeg')
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Carrierwave::Base64::Adapter do
 
         expect(
           subject.image.current_path
-        ).to eq file_path('../uploads', 'file.jpg')
+        ).to eq file_path('../uploads', 'file.jpeg')
       end
 
       it 'sets will_change for the attribute' do

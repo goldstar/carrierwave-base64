@@ -1,32 +1,42 @@
+require "rack/mime"
+
 module Carrierwave
   module Base64
     class Base64StringIO < StringIO
       class ArgumentError < StandardError; end
 
-      attr_accessor :file_format, :file_name
+      attr_accessor :header, :data, :file_name
 
-      def initialize(encoded_file, file_name)
-        description, encoded_bytes = encoded_file.split(',')
-
-        raise ArgumentError unless encoded_bytes
-        raise ArgumentError if encoded_bytes.eql?('(null)')
-
+      def initialize(encoded_string, file_name)
+        @header, @data = encoded_string.split(",")
         @file_name = file_name
-        @file_format = get_file_format description
-        bytes = ::Base64.decode64 encoded_bytes
 
-        super bytes
+        raise ArgumentError unless data
+        raise ArgumentError if data.eql? "(null)"
+
+        super decoded_data
       end
 
       def original_filename
-        File.basename("#{@file_name}.#{@file_format}")
+        File.basename("#{file_name}.#{file_extension}")
+      end
+
+      def mime_type
+        /data:([a-z0-9+\/]+);base64\z/.match(header)[1]
+      rescue
+        "application/octet-stream"
+      end
+
+      def file_extension
+        Rack::Mime::MIME_TYPES.key(mime_type).delete(".")
+      rescue
+        "txt"
       end
 
       private
 
-      def get_file_format(description)
-        regex = /([a-z0-9]+);base64\z/
-        regex.match(description).try(:[], 1)
+      def decoded_data
+        ::Base64.decode64(data)
       end
     end
   end
