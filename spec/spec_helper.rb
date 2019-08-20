@@ -9,7 +9,6 @@ require 'carrierwave'
 require 'carrierwave/orm/activerecord'
 require 'carrierwave/base64'
 
-ActiveRecord::Base.raise_in_transactional_callbacks = true
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
 load 'support/schema.rb'
